@@ -11,3 +11,18 @@
   torna mais fácil desenvolver APIs ao longo do tempo e habilita ferramentas poderosas de desenvolvedor.
   
   ![graphql](https://upload.wikimedia.org/wikipedia/commons/1/17/GraphQL_Logo.svg)
+
+## Instalações
+
+### Criar módulo go do projeto:
+````bash
+go mod init github.com/flaviossantana/go-graphql 
+````
+
+### gqlgen
+gqlgen é uma biblioteca Go para construir servidores GraphQL sem qualquer problema.
+
+#### Instalar gqlgen
+```bash
+go get github.com/99designs/gqlgen
+```
