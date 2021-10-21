@@ -26,3 +26,8 @@ gqlgen é uma biblioteca Go para construir servidores GraphQL sem qualquer probl
 ```bash
 go get github.com/99designs/gqlgen
 ```
+
+### Criar os arquivos do projeto com base no schema.graphqls
+```bash
+go run github.com/99designs/gqlgen init
+```
