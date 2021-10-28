@@ -12,6 +12,15 @@ import (
 	"github.com/flaviossantana/go-graphql/graph/model"
 )
 
+func (r *categoryResolver) Courses(ctx context.Context, obj *model.Category) ([]*model.Course, error) {
+	return findCoursesByCategoryID(r, obj.ID), nil
+
+}
+
+func (r *courseResolver) Chapter(ctx context.Context, obj *model.Course) ([]*model.Chapter, error) {
+	return findChapterByCourseID(r, obj.ID), nil
+}
+
 func (r *mutationResolver) CreateCategory(ctx context.Context, input model.NewCategory) (*model.Category, error) {
 	category := model.Category{
 		ID:          generateID(),
@@ -22,7 +31,6 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, input model.NewCa
 	r.Categories = append(r.Categories, &category)
 
 	return &category, nil
-
 }
 
 func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCourse) (*model.Course, error) {
@@ -37,7 +45,6 @@ func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCour
 	r.Courses = append(r.Courses, &course)
 
 	return &course, nil
-
 }
 
 func (r *mutationResolver) CreateChapter(ctx context.Context, input model.NewChapter) (*model.Chapter, error) {
@@ -51,7 +58,6 @@ func (r *mutationResolver) CreateChapter(ctx context.Context, input model.NewCha
 	r.Chapters = append(r.Chapters, &chapter)
 
 	return &chapter, nil
-
 }
 
 func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, error) {
@@ -66,12 +72,20 @@ func (r *queryResolver) Chapter(ctx context.Context) ([]*model.Chapter, error) {
 	return r.Resolver.Chapters, nil
 }
 
+// Category returns generated.CategoryResolver implementation.
+func (r *Resolver) Category() generated.CategoryResolver { return &categoryResolver{r} }
+
+// Course returns generated.CourseResolver implementation.
+func (r *Resolver) Course() generated.CourseResolver { return &courseResolver{r} }
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type categoryResolver struct{ *Resolver }
+type courseResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 
@@ -97,4 +111,24 @@ func findCourseById(r *mutationResolver, categoryID string) *model.Course {
 		}
 	}
 	return course
+}
+
+func findCoursesByCategoryID(r *categoryResolver, categoryID string) []*model.Course {
+	var courses []*model.Course
+	for _, course := range r.Resolver.Courses {
+		if course.Category.ID == categoryID {
+			courses = append(courses, course)
+		}
+	}
+	return courses
+}
+
+func findChapterByCourseID(r *courseResolver, courseID string) []*model.Chapter {
+	var chapters []*model.Chapter
+	for _, chapter := range r.Resolver.Chapters {
+		if chapter.Course.ID == courseID {
+			chapters = append(chapters, chapter)
+		}
+	}
+	return chapters
 }
